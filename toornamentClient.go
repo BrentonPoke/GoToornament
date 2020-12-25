@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/go-resty/resty"
 )
 type ToornamentClient struct{
 	Client http.Client
@@ -21,31 +23,23 @@ type Authorization struct {
 }
 
 func getClient(c *ToornamentClient, clientID, clientSecret, grantType string, scope []string) (ToornamentClient, error) {
-	var sb strings.Builder
-	sb.WriteString("https://api.toornament.com/oauth/v2/token")
-	sb.WriteString("?grant_type="+grantType)
-	sb.WriteString("&client_secret="+clientSecret)
-	sb.WriteString("&client_id="+clientID)
 
-	if scope != nil {sb.WriteString("&scope="+strings.Join(scope, ","))}
+	client := resty.New()
 
-	req, err := http.NewRequest("GET", sb.String(), nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	req.Header.Set("X-Api-Key", c.apiKey)
-	resp, err := c.Client.Do(req)
-	if err != nil {
-		log.Fatalln(err)
-	}else{
-		var body []byte
-		body, err := ioutil.ReadAll(resp.Body)
+	resp, err := client.R().
+		SetQueryParams(map[string]string{
+			"grant_type": grantType,
+			"client_secret": clientSecret,
+			"client_id": clientID,
+			"scope": strings.Join(scope, " "),
+		}).
+		Get("https://api.toornament.com/oauth/v2/token")
+
+		body := resp.Body()
 		if err != nil {
 			log.Fatalln(err)
 		}
-		defer resp.Body.Close()
 		err = json.Unmarshal(body, &c.auth)
-	}
 	return *c, err
 }
 
