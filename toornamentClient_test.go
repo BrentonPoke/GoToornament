@@ -7,12 +7,11 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	var client toornamentClient
+	var client ToornamentClient
 
 	client, err := getClient(&client,os.Getenv("CLIENT"),
 		os.Getenv("SECRET"),
 		"client_credentials",
-		os.Getenv("KEY"),
 		[]string{"organizer:admin"})
 	/*printing stuff*/
 	str := fmt.Sprintf("%v",client.auth)
