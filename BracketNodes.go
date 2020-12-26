@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 
-	"Toornament2Go/models"
 )
 
-type Opponent models.Opponent
 type BracketNode struct {
 	ID                string     `json:"id"`
 	StageID           string     `json:"stage_id"`
@@ -47,35 +45,35 @@ func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, h
 		log.Fatal(err)
 	}
 	if params.GroupNumbers != nil {
-		u.Query().Set("group_numbers",strings.Join(params.GroupNumbers, ","))
+		u.Query().Set("group_numbers", strings.Join(params.GroupNumbers, ","))
 	}
 	if params.GroupIDs != nil {
-		u.Query().Set("group_numbers",strings.Join(params.GroupNumbers, ","))
+		u.Query().Set("group_numbers", strings.Join(params.GroupNumbers, ","))
 	}
 
 	if params.RoundIDs != nil {
-		u.Query().Set("round_ids",strings.Join(params.RoundIDs, ","))
+		u.Query().Set("round_ids", strings.Join(params.RoundIDs, ","))
 	}
 
 	if params.RoundNumbers != nil {
-		u.Query().Set("round_numbers",strings.Join(params.RoundNumbers, ","))
+		u.Query().Set("round_numbers", strings.Join(params.RoundNumbers, ","))
 		sb.WriteString(strings.Join(params.RoundNumbers, ","))
 	}
 
 	if params.MaxDepth != 0 {
-		u.Query().Set("max_depth",strconv.Itoa(params.MaxDepth))
+		u.Query().Set("max_depth", strconv.Itoa(params.MaxDepth))
 	}
 
 	if params.MinDepth != 0 {
-		u.Query().Set("min_depth",strconv.Itoa(params.MinDepth))
+		u.Query().Set("min_depth", strconv.Itoa(params.MinDepth))
 	}
 
-	var bracketnodes = make([]BracketNode, 1)
+	var bracketNodes = make([]BracketNode, 1)
 	var nodes = getSimpleClient(c, u.String(), headers)
 
-	err = json.Unmarshal(nodes, &bracketnodes)
+	err = json.Unmarshal(nodes, &bracketNodes)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return bracketnodes
+	return bracketNodes
 }
