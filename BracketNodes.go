@@ -35,7 +35,7 @@ type BracketNodeParams struct {
 	MaxDepth     int      `json:"max_depth"`
 }
 
-func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, headers map[string]string, params *BracketNodeParams) []BracketNode {
+func GetBracketNodes(c *ToornamentClient, tournamentId string, stageId string, headers map[string]string, params *BracketNodeParams) []BracketNode {
 	var sb strings.Builder
 	sb.WriteString("https://api.toornament.com/viewer/v2/tournaments/")
 	sb.WriteString(tournamentId)

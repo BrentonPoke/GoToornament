@@ -20,7 +20,7 @@ type Authorization struct {
 	Scope       interface{} `json:"scope"`
 }
 
-func getClient(c *ToornamentClient, clientID, clientSecret, grantType string, scope []string) (ToornamentClient, error) {
+func GetClient(c *ToornamentClient, clientID, clientSecret, grantType string, scope []string) (ToornamentClient, error) {
 
 	c.client = resty.New()
 
