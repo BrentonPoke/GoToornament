@@ -8,10 +8,11 @@ import (
 
 func TestBracketClient(t *testing.T) {
 	var client ToornamentClient
-	client.apiKey = os.Getenv("KEY")
+	client.ApiKey = os.Getenv("KEY")
+	fmt.Println(client.ApiKey)
 	headers := map[string]string{"range":"nodes=0-6"}
 
-	bracketNodes := getBracketNodes(&client,"4182678401789968384","4182681695304105984",&headers, new(BracketNodeParams))
+	bracketNodes := getBracketNodes(&client,"4182678401789968384","4182681695304105984",headers, new(BracketNodeParams))
 
 	fmt.Println(bracketNodes)
 }

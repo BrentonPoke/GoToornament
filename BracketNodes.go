@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty"
 )
 
 type BracketNode struct {
@@ -34,7 +35,7 @@ type BracketNodeParams struct {
 	MaxDepth     int      `json:"max_depth"`
 }
 
-func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, headers *map[string]string, params *BracketNodeParams) []BracketNode {
+func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, headers map[string]string, params *BracketNodeParams) []BracketNode {
 	var sb strings.Builder
 	sb.WriteString("https://api.toornament.com/viewer/v2/tournaments/")
 	sb.WriteString(tournamentId)
@@ -44,18 +45,18 @@ func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, h
 	if err != nil {
 		log.Fatal(err)
 	}
-	if params.GroupNumbers != nil {
+	if len(params.GroupNumbers) > 0 {
 		u.Query().Set("group_numbers", strings.Join(params.GroupNumbers, ","))
 	}
-	if params.GroupIDs != nil {
-		u.Query().Set("group_numbers", strings.Join(params.GroupNumbers, ","))
+	if len(params.GroupIDs) > 0 {
+		u.Query().Set("group_ids", strings.Join(params.GroupNumbers, ","))
 	}
 
-	if params.RoundIDs != nil {
+	if len(params.RoundIDs) > 0 {
 		u.Query().Set("round_ids", strings.Join(params.RoundIDs, ","))
 	}
 
-	if params.RoundNumbers != nil {
+	if len(params.RoundNumbers) > 0  {
 		u.Query().Set("round_numbers", strings.Join(params.RoundNumbers, ","))
 		sb.WriteString(strings.Join(params.RoundNumbers, ","))
 	}
@@ -67,11 +68,22 @@ func getBracketNodes(c *ToornamentClient, tournamentId string, stageId string, h
 	if params.MinDepth != 0 {
 		u.Query().Set("min_depth", strconv.Itoa(params.MinDepth))
 	}
+	value := headers["range"]
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Accept", "application/json").
+		SetHeader("X-Api-Key", c.ApiKey).
+		SetHeader("range",value).
+		Get(u.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
 
 	var bracketNodes = make([]BracketNode, 1)
-	var nodes = getSimpleClient(c, u.String(), headers)
+	//var nodes = getSimpleClient(c, u.String(), headers)
 
-	err = json.Unmarshal(nodes, &bracketNodes)
+	err = json.Unmarshal(body, &bracketNodes)
 	if err != nil {
 		log.Fatalln(err)
 	}
