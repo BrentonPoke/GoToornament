@@ -9,7 +9,7 @@ import (
 func TestClient(t *testing.T) {
 	var client ToornamentClient
 	fmt.Println(os.Getenv("SECRET"))
-	c, err := getClient(&client,os.Getenv("CLIENT"),
+	c, err := GetClient(&client,os.Getenv("CLIENT"),
 		os.Getenv("SECRET"),
 		"client_credentials",
 		[]string{"organizer:admin"})
