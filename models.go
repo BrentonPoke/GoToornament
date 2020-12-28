@@ -28,6 +28,7 @@ type CustomFields struct {
 	OriginPlayerID      string   `json:"origin_player_id"`
 	PSNPlayerID         string   `json:"psn_player_id"`
 	SmitePlayerID       string   `json:"smite_player_id"`
+	RiotPlayerID        string   `json:"riot_player_id"`
 	SteamPlayerID       string   `json:"steam_player_id"`
 	SummonerPlayerID    string   `json:"summoner_player_id"`
 	UplayPlayerID       string   `json:"uplay_player_id"`

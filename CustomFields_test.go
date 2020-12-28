@@ -1,6 +1,7 @@
 package toornamentClient
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"testing"
@@ -11,8 +12,11 @@ func TestGetCustomFields(t *testing.T) {
 	client.ApiKey = os.Getenv("KEY")
 
 	customFields := GetCustomFields(&client,"4168798370927648768","team")
-	fmt.Println(customFields)
-	if customFields == nil {
-		t.Error("Couldn't find anything")
+
+	str, err := json.Marshal(customFields)
+	if err == nil {
+		fmt.Println(string(str))
+	}else {
+		t.Errorf("Couldn't find anything: %v",err)
 	}
 }
