@@ -15,4 +15,7 @@ func TestBracketClient(t *testing.T) {
 	bracketNodes := GetBracketNodes(&client,"4182678401789968384","4182681695304105984",headers, new(BracketNodeParams))
 
 	fmt.Println(bracketNodes)
+	if bracketNodes == nil {
+		t.Error("Couldn't find anything")
+	}
 }
