@@ -11,7 +11,7 @@ func TestGetCustomFields(t *testing.T) {
 	var client ToornamentClient
 	client.ApiKey = os.Getenv("KEY")
 
-	customFields := GetCustomFields(&client,"4168798370927648768","team")
+	customFields := GetViewerCustomFields(&client,"4168798370927648768","team")
 
 	str, err := json.Marshal(customFields)
 	if err == nil {
