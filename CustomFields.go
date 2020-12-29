@@ -6,7 +6,13 @@ import (
 
 	"github.com/go-resty/resty"
 )
-
+type CustomFieldsQuery struct {
+	Label        string `json:"label"`
+	DefaultValue string `json:"default_value"`
+	Required     bool   `json:"required"`
+	Public       bool   `json:"public"`
+	Position     int    `json:"position"`
+}
 func GetViewerCustomFields(c *ToornamentClient, tournamentId, targetType string) []CustomFields {
 	return getCustomFields(c, tournamentId, targetType, "viewer")
 }
@@ -51,6 +57,60 @@ func CreateCustomField ( c *ToornamentClient, tournamentId string, customFields 
 		log.Fatal(err)
 	}
 	return *customFields
+}
+func GetCustomField(c *ToornamentClient, tournamentId, fieldId string) CustomFields{
+	c.client = resty.New()
+	resp, err := c.client.R().
+		SetHeader("Accept", "application/json").
+		SetHeader("X-Api-Key", c.ApiKey).
+		SetHeader("Authorization","Bearer "+ c.auth.AccessToken).
+		Get("https://api.toornament.com/organizer/v2/tournaments/"+tournamentId+"/custom-fields"+fieldId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f := new(CustomFields)
+	err = json.Unmarshal(resp.Body(),f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return *f
+}
+func UpdateCustomField(c *ToornamentClient, tournamentId, fieldId string, query CustomFieldsQuery) CustomFields{
+	c.client = resty.New()
+	body, err := json.Marshal(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	resp, err := c.client.R().
+		SetHeader("Accept", "application/json").
+		SetHeader("X-Api-Key", c.ApiKey).
+		SetHeader("Authorization","Bearer "+ c.auth.AccessToken).
+		SetBody(string(body)).
+		Patch("https://api.toornament.com/organizer/v2/tournaments/"+tournamentId+"/custom-fields"+fieldId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f := new(CustomFields)
+	err = json.Unmarshal(resp.Body(),f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return *f
+}
+func DeleteCustomField(c *ToornamentClient, tournamentId, fieldId string) {
+	c.client = resty.New()
+	_, err := c.client.R().
+		SetHeader("Accept", "application/json").
+		SetHeader("X-Api-Key", c.ApiKey).
+		SetHeader("Authorization","Bearer "+ c.auth.AccessToken).
+		Delete("https://api.toornament.com/organizer/v2/tournaments/"+tournamentId+"/custom-fields"+fieldId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 func getCustomFields(c *ToornamentClient, tournamentId, targetType, scope string) []CustomFields{
 	c.client = resty.New()
