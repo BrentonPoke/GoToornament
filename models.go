@@ -78,9 +78,9 @@ type Discipline struct {
 	Shortname          string     `json:"shortname"`
 	Fullname           string     `json:"fullname"`
 	Copyrights         string     `json:"copyrights"`
-	PlatformsAvailable []string   `json:"platforms_available"`
-	TeamSize           TeamSize   `json:"team_size"`
-	Features           []Features `json:"features"`
+	PlatformsAvailable []string   `json:"platforms_available,omitempty"`
+	TeamSize           TeamSize   `json:"team_size,omitempty"`
+	Features           []Features `json:"features,omitempty"`
 }
 type TeamSize struct {
 	Min int `json:"min"`
