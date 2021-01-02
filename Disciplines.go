@@ -19,7 +19,7 @@ func NewDisciplineRange(begin, end int) *DisciplineRange {
 	return &d
 }
 
-func GetDiscipline(c *ToornamentClient, disciplineRange *DisciplineRange) []Discipline {
+func GetDisciplines(c *ToornamentClient, disciplineRange *DisciplineRange) []Discipline {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Accept", "application/json").
@@ -36,4 +36,22 @@ func GetDiscipline(c *ToornamentClient, disciplineRange *DisciplineRange) []Disc
 		log.Fatalln(err)
 	}
 	return discipline
+}
+
+func GetDiscipline(c *ToornamentClient, id string) Discipline {
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Accept", "application/json").
+		SetHeader("X-Api-Key", c.ApiKey).
+		Get("https://api.toornament.com/viewer/v2/disciplines/"+id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	discipline := new(Discipline)
+	err = json.Unmarshal(body, &discipline)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return *discipline
 }
