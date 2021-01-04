@@ -51,3 +51,24 @@ func GetGroups(c *ToornamentClient, tournamentId, apiScope string,params *GroupP
 	}
 	return groups
 }
+
+func GetGroup(c *ToornamentClient, tournamentId, apiScope, groupId string) Group {
+	client := resty.New()
+	client.Header.Set("Accept", "application/json")
+	client.Header.Set("X-Api-Key", c.ApiKey)
+	if apiScope != "viewer"{
+		client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+	}
+	resp, err := client.R().
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/groups/"+groupId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	group := new(Group)
+	err = json.Unmarshal(body, &group)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return *group
+}

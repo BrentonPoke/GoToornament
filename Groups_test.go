@@ -18,6 +18,17 @@ func TestGroups(t *testing.T) {
 	}else{
 		fmt.Println(string(str))
 	}
+}
 
+func TestGroup(t *testing.T) {
+	var client ToornamentClient
+	client.ApiKey = os.Getenv("KEY")
 
+	group := GetGroup(&client,"4159532293277130752",GroupScope().VIEWER,"4238100855809146882")
+	str, err := json.Marshal(group)
+	if err != nil {
+		t.Errorf("Couldn't find anything: %v",err)
+	}else{
+		fmt.Println(string(str))
+	}
 }
