@@ -8,23 +8,12 @@ import (
 	"github.com/go-resty/resty"
 )
 
-type participantRange struct {
-	begin, end int
-	drange     string
+func ParticipantScope() *apiScope {
+	return &apiScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
 }
 
-type participantScope struct {
-	VIEWER      string
-	PARTICIPANT string
-	ORGANIZER   string
-}
-
-func ParticipantScope() *disciplineScope {
-	return &disciplineScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
-}
-
-func NewParticipantRange(begin, end int) *participantRange {
-	d := participantRange{begin: begin, end: end}
+func NewParticipantRange(begin, end int) *apiRange {
+	d := apiRange{begin: begin, end: end}
 	d.drange = "participants=" + strconv.Itoa(d.begin) + "-" + strconv.Itoa(d.end)
 	return &d
 }
@@ -47,7 +36,7 @@ func GetParticipant(c *ToornamentClient, tournamentId, apiScope, participantId s
 	return *participant
 }
 
-func GetParticipants(c *ToornamentClient, tournamentId, apiScope string, participantRange *participantRange) []Participant {
+func GetParticipants(c *ToornamentClient, tournamentId, apiScope string, participantRange *apiRange) []Participant {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Accept", "application/json").

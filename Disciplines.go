@@ -8,28 +8,17 @@ import (
 	"github.com/go-resty/resty"
 )
 
-type disciplineRange struct {
-	begin, end int
-	drange     string
+func DisciplineScope() *apiScope {
+	return &apiScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
 }
 
-type disciplineScope struct {
-	VIEWER string
-	PARTICIPANT string
-	ORGANIZER string
-}
-
-func DisciplineScope() *disciplineScope {
-	return &disciplineScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
-}
-
-func NewDisciplineRange(begin, end int) *disciplineRange {
-	d := disciplineRange{begin: begin, end: end}
+func NewDisciplineRange(begin, end int) *apiRange {
+	d := apiRange{begin: begin, end: end}
 	d.drange = "disciplines=" + strconv.Itoa(d.begin) + "-" + strconv.Itoa(d.end)
 	return &d
 }
 
-func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *disciplineRange) []Discipline {
+func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRange) []Discipline {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Accept", "application/json").
