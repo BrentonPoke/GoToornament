@@ -123,3 +123,25 @@ type apiScope struct {
 	PARTICIPANT string
 	ORGANIZER string
 }
+
+type Ranking struct {
+	ID          string      `json:"id"`
+	GroupID     string      `json:"group_id"`
+	Number      int         `json:"number"`
+	Position    int         `json:"position"`
+	Rank        int         `json:"rank"`
+	Participant Participant `json:"participant"`
+	Points      int         `json:"points"`
+	Properties  Properties  `json:"properties"`
+}
+
+type Properties struct {
+	Wins            int `json:"wins"`
+	Draws           int `json:"draws"`
+	Losses          int `json:"losses"`
+	Played          int `json:"played"`
+	Forfeits        int `json:"forfeits"`
+	ScoreFor        int `json:"score_for"`
+	ScoreAgainst    int `json:"score_against"`
+	ScoreDifference int `json:"score_difference"`
+}
