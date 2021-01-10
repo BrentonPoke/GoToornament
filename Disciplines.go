@@ -19,8 +19,8 @@ func NewDisciplineRange(begin, end int) *apiRange {
 }
 
 func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRange) []Discipline {
-	client := resty.New()
-	resp, err := client.R().
+	c.client = resty.New()
+	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", disciplineRange.drange).
@@ -38,8 +38,8 @@ func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRa
 }
 
 func GetDiscipline(c *ToornamentClient, disciplineScope, id string) Discipline {
-	client := resty.New()
-	resp, err := client.R().
+	c.client = resty.New()
+	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		Get("https://api.toornament.com/"+disciplineScope+"/v2/disciplines/"+id)

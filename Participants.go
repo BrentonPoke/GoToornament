@@ -19,8 +19,8 @@ func NewParticipantRange(begin, end int) *apiRange {
 }
 
 func GetParticipant(c *ToornamentClient, tournamentId, apiScope, participantId string) Participant {
-	client := resty.New()
-	resp, err := client.R().
+	c.client = resty.New()
+	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/participants/"+participantId)
@@ -37,8 +37,8 @@ func GetParticipant(c *ToornamentClient, tournamentId, apiScope, participantId s
 }
 
 func GetParticipants(c *ToornamentClient, tournamentId, apiScope string, participantRange *apiRange) []Participant {
-	client := resty.New()
-	resp, err := client.R().
+	c.client = resty.New()
+	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", participantRange.drange).

@@ -145,3 +145,30 @@ type Properties struct {
 	ScoreAgainst    int `json:"score_against"`
 	ScoreDifference int `json:"score_difference"`
 }
+
+type Match struct {
+	ScheduledDatetime time.Time   `json:"scheduled_datetime"`
+	PublicNote        string      `json:"public_note"`
+	PrivateNote       string      `json:"private_note"`
+	ID                string      `json:"id"`
+	Status            string      `json:"status"`
+	StageID           string      `json:"stage_id"`
+	GroupID           string      `json:"group_id"`
+	RoundID           string      `json:"round_id"`
+	Number            int         `json:"number"`
+	Type              string      `json:"type"`
+	Settings          Settings    `json:"settings"`
+	PlayedAt          time.Time   `json:"played_at"`
+	ReportClosed      bool        `json:"report_closed"`
+	Opponents         []Opponents `json:"opponents"`
+}
+
+type Opponents struct {
+	Number      int         `json:"number"`
+	Position    int         `json:"position"`
+	Result      string      `json:"result"`
+	Rank        int         `json:"rank"`
+	Forfeit     bool        `json:"forfeit"`
+	Score       int         `json:"score"`
+	Participant Participant `json:"participant"`
+}

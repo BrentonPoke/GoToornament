@@ -27,33 +27,33 @@ type RankingParams struct {
 }
 
 func GetRankings(c *ToornamentClient, tournamentId, stageId, apiScope string, params RankingParams, itemRange *apiRange) []Ranking {
-	client := resty.New()
-	client.Header.Set("Accept", "application/json")
-	client.Header.Set("X-Api-Key", c.ApiKey)
-	client.Header.Set("range", itemRange.drange)
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+	c.client.Header.Set("range", itemRange.drange)
 
 	if len(params.GroupNumbers) > 0 {
 		sNums := make([]string, len(params.GroupNumbers))
 		for i, x := range params.GroupNumbers {
 			sNums[i] = strconv.Itoa(x)
 		}
-		client.QueryParam.Set("group_numbers", strings.Join(sNums, ","))
+		c.client.QueryParam.Set("group_numbers", strings.Join(sNums, ","))
 	}
 	if len(params.GroupIds) > 0 {
-		client.QueryParam.Set("group_ids", strings.Join(params.GroupIds, ","))
+		c.client.QueryParam.Set("group_ids", strings.Join(params.GroupIds, ","))
 	}
 	if apiScope != "viewer"{
 		if len(params.CustomUserIdentifiers) > 0{
-			client.QueryParam.Set("custom_user_identifiers",strings.Join(params.CustomUserIdentifiers, ","))
+			c.client.QueryParam.Set("custom_user_identifiers",strings.Join(params.CustomUserIdentifiers, ","))
 		}
 
 		if len(params.ParticipantIds) > 0 {
-			client.QueryParam.Set("participant_ids", strings.Join(params.ParticipantIds, ","))
+			c.client.QueryParam.Set("participant_ids", strings.Join(params.ParticipantIds, ","))
 		}
-		client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+		c.client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
 	}
 
-	resp, err := client.R().
+	resp, err := c.client.R().
 		Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/"+tournamentId+"/stages/"+stageId+"/ranking-items")
 	if err != nil {
 		log.Fatal(err)
