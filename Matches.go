@@ -22,7 +22,9 @@ type sort struct {
 	SCHEDULE       string
 	LATEST_RESULTS string
 }
-
+func MatchScope() *apiScope {
+	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+}
 func NewSort() Sort {
 	return sort{STRUCTURE: "structures", SCHEDULE: "schedule", LATEST_RESULTS: "latest_results"}
 }
@@ -40,6 +42,7 @@ type MatchParams struct {
 	CustomUserIdentifiers []string  `json:"custom_user_identifiers"`
 	GroupIds              []string  `json:"group_ids"`
 	RoundIds              []string  `json:"round_ids"`
+	RoundNumbers              []int  `json:"round_numbers"`
 	ParticipantIds        []string  `json:"participant_ids"`
 	StageIds              []string  `json:"stage_ids"`
 	Statuses              []string  `json:"statuses"`
