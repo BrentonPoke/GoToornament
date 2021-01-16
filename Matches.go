@@ -130,3 +130,20 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 	return matches
 }
 
+func GetMatch(c *ToornamentClient, tournamentId, matchId string) Match{
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+	resp, err := c.client.R().Get("https://api.toornament.com/viewer/v2/tournaments/"+tournamentId+"/matches/"+matchId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	match := new(Match)
+	err = json.Unmarshal(body, &match)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return *match
+}
