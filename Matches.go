@@ -23,6 +23,22 @@ type Sort struct {
 	LATEST_RESULTS string
 }
 
+type UpdateMatchParams struct {
+	ScheduledDatetime time.Time `json:"scheduled_datetime"`
+	PublicNote        string    `json:"public_note"`
+	PrivateNote       string    `json:"private_note"`
+	Opponents         []struct {
+		Number     int    `json:"number"`
+		Position   int    `json:"position"`
+		Result     string `json:"result"`
+		Rank       int    `json:"rank"`
+		Forfeit    bool   `json:"forfeit"`
+		Score      int    `json:"score"`
+		Properties struct {
+		} `json:"properties"`
+	} `json:"opponents"`
+}
+
 func MatchScope() *apiScope {
 	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
 }
@@ -192,4 +208,22 @@ func GetDisciplineMatches(c *ToornamentClient, disciplineId string, params Match
 		log.Fatalln(err)
 	}
 	return matches
+}
+
+func UpdateMatch(c *ToornamentClient,tournamentId, matchId string) Match {
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+
+	resp, err := c.client.R().Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	match := new(Match)
+	err = json.Unmarshal(body, &match)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return *match
 }
