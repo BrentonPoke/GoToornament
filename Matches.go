@@ -16,17 +16,18 @@ type status struct {
 	PENDING   string
 	COMPLETED string
 }
-type Sort interface{}
-type sort struct {
+
+type Sort struct {
 	STRUCTURE      string
 	SCHEDULE       string
 	LATEST_RESULTS string
 }
+
 func MatchScope() *apiScope {
 	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
 }
 func NewSort() Sort {
-	return sort{STRUCTURE: "structures", SCHEDULE: "schedule", LATEST_RESULTS: "latest_results"}
+	return Sort{STRUCTURE: "structures", SCHEDULE: "schedule", LATEST_RESULTS: "latest_results"}
 }
 func NewStatus() Status {
 	return status{RUNNING: "running", PENDING: "pending", COMPLETED: "completed"}
@@ -39,17 +40,19 @@ func NewMatchRange(begin, end int) *apiRange {
 }
 
 type MatchParams struct {
-	CustomUserIdentifiers []string  `json:"custom_user_identifiers"`
-	GroupIds              []string  `json:"group_ids"`
-	RoundIds              []string  `json:"round_ids"`
-	RoundNumbers              []int  `json:"round_numbers"`
-	ParticipantIds        []string  `json:"participant_ids"`
-	StageIds              []string  `json:"stage_ids"`
-	Statuses              []string  `json:"statuses"`
+	CustomUserIdentifiers []string   `json:"custom_user_identifiers"`
+	GroupIds              []string   `json:"group_ids"`
+	RoundIds              []string   `json:"round_ids"`
+	RoundNumbers          []int      `json:"round_numbers"`
+	ParticipantIds        []string   `json:"participant_ids"`
+	TournamentIds         []string   `json:"tournament_ids"`
+	StageIds              []string   `json:"stage_ids"`
+	Statuses              []string   `json:"statuses"`
 	IsScheduled           *bool      `json:"is_scheduled"`
+	IsFeatured            *bool      `json:"is_featured"`
 	ScheduledBefore       *time.Time `json:"scheduled_before"`
 	ScheduledAfter        *time.Time `json:"scheduled_after"`
-	Sort                  Sort      `json:"sort"`
+	Sort                  string     `json:"sort"`
 }
 
 func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params MatchParams, matchRange *apiRange) []Match {
@@ -76,9 +79,10 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 	if len(params.RoundIds) > 0 {
 		c.client.QueryParam.Set("round_ids", strings.Join(params.RoundIds, ","))
 	}
-
-	if params.ScheduledBefore != nil{
-		c.client.QueryParam.Set("scheduled_before",params.ScheduledBefore.Format("2006-01-02T15:04:05+07:00"))
+	if params.Sort != "" {
+		c.client.QueryParam.Set("sort", params.Sort)
+	} else {
+		c.client.QueryParam.Set("sort", "structure")
 	}
 	if params.IsScheduled != nil {
 		input := func(i bool) string {
@@ -92,37 +96,26 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 		c.client.QueryParam.Set("is_scheduled", input(*params.IsScheduled))
 	}
 
-	if params.ScheduledBefore != nil{
-		c.client.QueryParam.Set("scheduled_before",params.ScheduledBefore.Format("2006-01-02T15:04:05+07:00"))
+	if params.ScheduledBefore != nil {
+		c.client.QueryParam.Set("scheduled_before", params.ScheduledBefore.Format("2006-01-02T15:04:05+07:00"))
 	}
-	if params.ScheduledAfter != nil{
-		c.client.QueryParam.Set("scheduled_after",params.ScheduledAfter.Format("2006-01-02T15:04:05+07:00"))
+	if params.ScheduledAfter != nil {
+		c.client.QueryParam.Set("scheduled_after", params.ScheduledAfter.Format("2006-01-02T15:04:05+07:00"))
 	}
-	if params.IsScheduled != nil {
-		input := func(i bool) string {
-			switch {
-			case i:
-				return "1"
-			default:
-				return "0"
-			}
+	if apiScope != "viewer" {
+		if len(params.CustomUserIdentifiers) > 0 {
+			c.client.QueryParam.Set("custom_user_identifiers", strings.Join(params.CustomUserIdentifiers, ","))
 		}
-		c.client.QueryParam.Set("is_scheduled", input(*params.IsScheduled))
-	}
-	if apiScope != "viewer"{
-		if len(params.CustomUserIdentifiers) > 0{
-			c.client.QueryParam.Set("custom_user_identifiers",strings.Join(params.CustomUserIdentifiers, ","))
-		}
-		c.client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 
 	resp, err := c.client.R().
-		Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/"+tournamentId+"/matches")
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/matches")
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	matches := make([]Match,1,matchRange.end-matchRange.begin+1)
+	matches := make([]Match, 1, matchRange.end-matchRange.begin+1)
 	err = json.Unmarshal(body, &matches)
 	if err != nil {
 		log.Fatalln(err)
@@ -130,11 +123,11 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 	return matches
 }
 
-func GetMatch(c *ToornamentClient, tournamentId, matchId string) Match{
+func GetMatch(c *ToornamentClient, tournamentId, matchId string) Match {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
-	resp, err := c.client.R().Get("https://api.toornament.com/viewer/v2/tournaments/"+tournamentId+"/matches/"+matchId)
+	resp, err := c.client.R().Get("https://api.toornament.com/viewer/v2/tournaments/" + tournamentId + "/matches/" + matchId)
 
 	if err != nil {
 		log.Fatal(err)
@@ -146,4 +139,57 @@ func GetMatch(c *ToornamentClient, tournamentId, matchId string) Match{
 		log.Fatalln(err)
 	}
 	return *match
+}
+
+func GetDisciplineMatches(c *ToornamentClient, disciplineId string, params MatchParams, matchRange *apiRange) []Match {
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+	c.client.Header.Set("range", matchRange.drange)
+
+	if len(params.Statuses) > 0 {
+		c.client.QueryParam.Set("statuses", strings.Join(params.Statuses, ","))
+	}
+
+	if len(params.ParticipantIds) > 0 {
+		c.client.QueryParam.Set("participant_ids", strings.Join(params.ParticipantIds, ","))
+	}
+	if len(params.ParticipantIds) > 0 {
+		c.client.QueryParam.Set("tournament_ids", strings.Join(params.TournamentIds, ","))
+	}
+	if params.ScheduledBefore != nil {
+		c.client.QueryParam.Set("scheduled_before", params.ScheduledBefore.Format("2006-01-02T15:04:05+07:00"))
+	}
+	if params.ScheduledAfter != nil {
+		c.client.QueryParam.Set("scheduled_after", params.ScheduledAfter.Format("2006-01-02T15:04:05+07:00"))
+	}
+	if params.Sort != "" {
+		c.client.QueryParam.Set("sort", params.Sort)
+	} else {
+		c.client.QueryParam.Set("sort", "structure")
+	}
+	if params.IsFeatured != nil {
+		input := func(i bool) string {
+			switch {
+			case i:
+				return "1"
+			default:
+				return "0"
+			}
+		}
+		c.client.QueryParam.Set("is_featured", input(*params.IsScheduled))
+	}
+
+	resp, err := c.client.R().
+		Get("https://api.toornament.com/viewer/v2/disciplines/" + disciplineId + "/matches")
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	matches := make([]Match, 1, matchRange.end-matchRange.begin+1)
+	err = json.Unmarshal(body, &matches)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return matches
 }
