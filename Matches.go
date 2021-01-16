@@ -122,10 +122,11 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	matches := make([]Match,1)
+	matches := make([]Match,1,matchRange.end-matchRange.begin+1)
 	err = json.Unmarshal(body, &matches)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	return matches
 }
+

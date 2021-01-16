@@ -88,7 +88,7 @@ type Discipline struct {
 	Copyrights         string     `json:"copyrights"`
 	PlatformsAvailable []string   `json:"platforms_available,omitempty"`
 	TeamSize           TeamSize   `json:"team_size,omitempty"`
-	Features           []Features `json:"features,omitempty"`
+	Features           []Feature `json:"features,omitempty"`
 }
 type TeamSize struct {
 	Min int `json:"min"`
@@ -96,7 +96,7 @@ type TeamSize struct {
 }
 type Options struct {
 }
-type Features struct {
+type Feature struct {
 	Name    string  `json:"name"`
 	Type    string  `json:"type"`
 	Options Options `json:"options"`
@@ -160,10 +160,10 @@ type Match struct {
 	Settings          Settings    `json:"settings"`
 	PlayedAt          time.Time   `json:"played_at"`
 	ReportClosed      bool        `json:"report_closed"`
-	Opponents         []Opponents `json:"opponents"`
+	Opponents         []MatchOpponent `json:"opponents"`
 }
 
-type Opponents struct {
+type MatchOpponent struct {
 	Number      int         `json:"number"`
 	Position    int         `json:"position"`
 	Result      string      `json:"result"`
@@ -171,4 +171,11 @@ type Opponents struct {
 	Forfeit     bool        `json:"forfeit"`
 	Score       int         `json:"score"`
 	Participant Participant `json:"participant"`
+	Properties Properties `json:"properties"`
+}
+type MatchGame struct {
+	Number     int         `json:"number"`
+	Status     string      `json:"status"`
+	Opponents  []MatchOpponent `json:"opponents"`
+	Properties Properties  `json:"properties"`
 }

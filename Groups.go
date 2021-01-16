@@ -44,7 +44,7 @@ func GetGroups(c *ToornamentClient, tournamentId, apiScope string,params *GroupP
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	groups := make([]Group,1)
+	groups := make([]Group,1,groupRange.end+groupRange.begin+1)
 	err = json.Unmarshal(body, &groups)
 	if err != nil {
 		log.Fatalln(err)
