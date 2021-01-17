@@ -210,12 +210,11 @@ func GetDisciplineMatches(c *ToornamentClient, disciplineId string, params Match
 	return matches
 }
 
-func UpdateMatch(c *ToornamentClient,tournamentId, matchId string) Match {
+func UpdateMatch(c *ToornamentClient,tournamentId, matchId string, params *UpdateMatchParams) Match {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
-
-	resp, err := c.client.R().Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId)
+	resp, err := c.client.R().SetBody(params).Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId)
 	if err != nil {
 		log.Fatal(err)
 	}
