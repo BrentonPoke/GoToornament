@@ -81,13 +81,13 @@ type Opponent struct {
 }
 
 type Discipline struct {
-	ID                 string     `json:"id"`
-	Name               string     `json:"name"`
-	Shortname          string     `json:"shortname"`
-	Fullname           string     `json:"fullname"`
-	Copyrights         string     `json:"copyrights"`
-	PlatformsAvailable []string   `json:"platforms_available,omitempty"`
-	TeamSize           TeamSize   `json:"team_size,omitempty"`
+	ID                 string    `json:"id"`
+	Name               string    `json:"name"`
+	Shortname          string    `json:"shortname"`
+	Fullname           string    `json:"fullname"`
+	Copyrights         string    `json:"copyrights"`
+	PlatformsAvailable []string  `json:"platforms_available,omitempty"`
+	TeamSize           TeamSize  `json:"team_size,omitempty"`
 	Features           []Feature `json:"features,omitempty"`
 }
 type TeamSize struct {
@@ -119,9 +119,9 @@ type apiRange struct {
 }
 
 type apiScope struct {
-	VIEWER string
+	VIEWER      string
 	PARTICIPANT string
-	ORGANIZER string
+	ORGANIZER   string
 }
 
 type Ranking struct {
@@ -147,19 +147,19 @@ type Properties struct {
 }
 
 type Match struct {
-	ScheduledDatetime time.Time   `json:"scheduled_datetime"`
-	PublicNote        string      `json:"public_note"`
-	PrivateNote       string      `json:"private_note"`
-	ID                string      `json:"id"`
-	Status            string      `json:"status"`
-	StageID           string      `json:"stage_id"`
-	GroupID           string      `json:"group_id"`
-	RoundID           string      `json:"round_id"`
-	Number            int         `json:"number"`
-	Type              string      `json:"type"`
-	Settings          Settings    `json:"settings"`
-	PlayedAt          time.Time   `json:"played_at"`
-	ReportClosed      bool        `json:"report_closed"`
+	ScheduledDatetime time.Time       `json:"scheduled_datetime"`
+	PublicNote        string          `json:"public_note"`
+	PrivateNote       string          `json:"private_note"`
+	ID                string          `json:"id"`
+	Status            string          `json:"status"`
+	StageID           string          `json:"stage_id"`
+	GroupID           string          `json:"group_id"`
+	RoundID           string          `json:"round_id"`
+	Number            int             `json:"number"`
+	Type              string          `json:"type"`
+	Settings          Settings        `json:"settings"`
+	PlayedAt          time.Time       `json:"played_at"`
+	ReportClosed      bool            `json:"report_closed"`
 	Opponents         []MatchOpponent `json:"opponents"`
 }
 
@@ -171,11 +171,12 @@ type MatchOpponent struct {
 	Forfeit     bool        `json:"forfeit"`
 	Score       int         `json:"score"`
 	Participant Participant `json:"participant"`
-	Properties Properties `json:"properties"`
+	Properties  Properties  `json:"properties"`
 }
 type MatchGame struct {
-	Number     int         `json:"number"`
-	Status     string      `json:"status"`
+	Number     int             `json:"number"`
+	Type       string          `json:"type,omitempty"`
+	Status     string          `json:"status"`
 	Opponents  []MatchOpponent `json:"opponents"`
-	Properties Properties  `json:"properties"`
+	Properties Properties      `json:"properties"`
 }
