@@ -19,6 +19,11 @@ type RoundParams struct {
 func RoundScope() *apiScope {
 	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
 }
+func NewRoundRange(begin, end int) *apiRange {
+	d := apiRange{begin: begin, end: end}
+	d.drange = "rounds=" + strconv.Itoa(d.begin) + "-" + strconv.Itoa(d.end)
+	return &d
+}
 func GetRounds(c *ToornamentClient, tournamentId, apiScope string, params RoundParams, roundRange *apiRange) []Round {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
