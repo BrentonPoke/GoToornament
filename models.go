@@ -180,3 +180,13 @@ type MatchGame struct {
 	Opponents  []MatchOpponent `json:"opponents"`
 	Properties Properties      `json:"properties"`
 }
+
+type Round struct {
+	ID       string   `json:"id"`
+	StageID  string   `json:"stage_id"`
+	GroupID  string   `json:"group_id"`
+	Number   int      `json:"number"`
+	Name     string   `json:"name"`
+	Closed   bool     `json:"closed"`
+	Settings Settings `json:"settings"`
+}

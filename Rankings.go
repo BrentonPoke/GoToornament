@@ -59,7 +59,7 @@ func GetRankings(c *ToornamentClient, tournamentId, stageId, apiScope string, pa
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	rankings := make([]Ranking,1)
+	rankings := make([]Ranking,1,itemRange.end-itemRange.begin+1)
 	err = json.Unmarshal(body, &rankings)
 	if err != nil {
 		log.Fatalln(err)
