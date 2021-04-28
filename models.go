@@ -113,6 +113,20 @@ type Settings struct {
 	Size int `json:"size"`
 }
 
+type Stage struct {
+ID       string `json:"id"`
+Number   int    `json:"number"`
+Name     string `json:"name"`
+Type     string `json:"type"`
+Closed   bool   `json:"closed"`
+StageSettings struct {
+Size       int    `json:"size"`
+GrandFinal string `json:"grand_final"`
+Threshold  int    `json:"threshold"`
+SkipRound1 bool   `json:"skip_round1"`
+} `json:"settings"`
+}
+
 type apiRange struct {
 	begin, end int
 	drange     string
