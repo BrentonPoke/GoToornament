@@ -125,6 +125,7 @@ GrandFinal string `json:"grand_final"`
 Threshold  int    `json:"threshold"`
 SkipRound1 bool   `json:"skip_round1"`
 } `json:"settings"`
+TournamentId string `json:"tournament_id"`
 }
 
 type apiRange struct {
