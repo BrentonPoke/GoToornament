@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 func StageScope() *apiScope {
@@ -19,20 +19,20 @@ func NewStagesRange(begin, end int) *apiRange {
 	return &d
 }
 
-func GetStages(c *ToornamentClient,tournamentId, apiScope string) []Stage{
+func GetStages(c *ToornamentClient, tournamentId, apiScope string) []Stage {
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
-	if apiScope != "viewer"{
-		client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+	if apiScope != "viewer" {
+		client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 	resp, err := client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/stages")
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages")
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	stages := make([]Stage,1)
+	stages := make([]Stage, 1)
 	err = json.Unmarshal(body, &stages)
 	if err != nil {
 		log.Fatalln(err)
@@ -40,13 +40,13 @@ func GetStages(c *ToornamentClient,tournamentId, apiScope string) []Stage{
 	return stages
 }
 
-func GetStagesForTournaments(c *ToornamentClient,tournamentIds []string, apiScope string, stageRange *apiRange) []Stage{
+func GetStagesForTournaments(c *ToornamentClient, tournamentIds []string, apiScope string, stageRange *apiRange) []Stage {
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
-	client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
-	client.Header.Set("range",stageRange.drange)
-	client.QueryParam.Set("tournament_ids",strings.Join(tournamentIds,","))
+	client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
+	client.Header.Set("range", stageRange.drange)
+	client.QueryParam.Set("tournament_ids", strings.Join(tournamentIds, ","))
 
 	resp, err := client.R().
 		Get("https://api.toornament.com/organizer/v2/stages")
@@ -54,7 +54,7 @@ func GetStagesForTournaments(c *ToornamentClient,tournamentIds []string, apiScop
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	stages := make([]Stage,1,stageRange.end+stageRange.begin+1)
+	stages := make([]Stage, 1, stageRange.end+stageRange.begin+1)
 	err = json.Unmarshal(body, &stages)
 	if err != nil {
 		log.Fatalln(err)
@@ -62,15 +62,15 @@ func GetStagesForTournaments(c *ToornamentClient,tournamentIds []string, apiScop
 	return stages
 }
 
-func GetStage(c *ToornamentClient, tournamentId, id, apiScope string ) Stage{
+func GetStage(c *ToornamentClient, tournamentId, id, apiScope string) Stage {
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
-	if apiScope != "viewer"{
-		client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+	if apiScope != "viewer" {
+		client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 	resp, err := client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/stages/"+id)
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages/" + id)
 	if err != nil {
 		log.Printf("Called with scope(s): %v", c.auth.Scope)
 		log.Fatal(err)
@@ -84,13 +84,13 @@ func GetStage(c *ToornamentClient, tournamentId, id, apiScope string ) Stage{
 	return *stage
 }
 
-func GetStageOnlyByID(c *ToornamentClient, id string ) Stage{
+func GetStageOnlyByID(c *ToornamentClient, id string) Stage {
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
 
 	resp, err := client.R().
-		Get("https://api.toornament.com/organizer/v2/stages/"+id)
+		Get("https://api.toornament.com/organizer/v2/stages/" + id)
 	if err != nil {
 		log.Printf("Called with scope(s): %v", c.auth.Scope)
 		log.Fatal(err)

@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 type RoundParams struct {
-	StageIds []string `json:"stage_ids"`
-	StageNumbers []int `json:"stage_numbers"`
-	GroupIds []string `json:"group_ids"`
-	GroupNumbers []int `json:"group_numbers"`
+	StageIds     []string `json:"stage_ids"`
+	StageNumbers []int    `json:"stage_numbers"`
+	GroupIds     []string `json:"group_ids"`
+	GroupNumbers []int    `json:"group_numbers"`
 }
 
 func RoundScope() *apiScope {
@@ -51,13 +51,13 @@ func GetRounds(c *ToornamentClient, tournamentId, apiScope string, params RoundP
 	if len(params.StageIds) > 0 {
 		c.client.QueryParam.Set("stage_ids", strings.Join(params.StageIds, ","))
 	}
-	resp, err := c.client.R().Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/"+tournamentId+"/rounds")
+	resp, err := c.client.R().Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/rounds")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	rounds := make([]Round,1,roundRange.end-roundRange.begin+1)
+	rounds := make([]Round, 1, roundRange.end-roundRange.begin+1)
 	err = json.Unmarshal(body, &rounds)
 	if err != nil {
 		log.Fatalln(err)

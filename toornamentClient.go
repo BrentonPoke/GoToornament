@@ -5,11 +5,12 @@ import (
 	"log"
 	"strings"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
-type ToornamentClient struct{
+
+type ToornamentClient struct {
 	client *resty.Client
-	auth Authorization
+	auth   Authorization
 	ApiKey string
 }
 
@@ -26,17 +27,17 @@ func GetClient(c *ToornamentClient, clientID, clientSecret, grantType string, sc
 
 	resp, err := c.client.R().
 		SetQueryParams(map[string]string{
-			"grant_type": grantType,
+			"grant_type":    grantType,
 			"client_secret": clientSecret,
-			"client_id": clientID,
-			"scope": strings.Join(scope, " "),
+			"client_id":     clientID,
+			"scope":         strings.Join(scope, " "),
 		}).
-		Get("https://api.toornament.com/oauth/v2/token")
+		Get("https://api.toornament.com/oauth//token")
 
-		body := resp.Body()
-		if err != nil {
-			log.Fatalln(err)
-		}
-		err = json.Unmarshal(body, &c.auth)
+	body := resp.Body()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = json.Unmarshal(body, &c.auth)
 	return *c, err
 }

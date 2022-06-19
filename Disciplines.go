@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 func DisciplineScope() *apiScope {
@@ -24,12 +24,12 @@ func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRa
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", disciplineRange.drange).
-		Get("https://api.toornament.com/"+apiScope+"/v2/disciplines")
+		Get("https://api.toornament.com/" + apiScope + "/v2/disciplines")
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	discipline := make([]Discipline,1)
+	discipline := make([]Discipline, 1)
 	err = json.Unmarshal(body, &discipline)
 	if err != nil {
 		log.Fatalln(err)
@@ -42,7 +42,7 @@ func GetDiscipline(c *ToornamentClient, disciplineScope, id string) Discipline {
 	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
-		Get("https://api.toornament.com/"+disciplineScope+"/v2/disciplines/"+id)
+		Get("https://api.toornament.com/" + disciplineScope + "/v2/disciplines/" + id)
 	if err != nil {
 		log.Fatal(err)
 	}

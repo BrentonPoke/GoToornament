@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 func ParticipantScope() *apiScope {
@@ -23,7 +23,7 @@ func GetParticipant(c *ToornamentClient, tournamentId, apiScope, participantId s
 	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/participants/"+participantId)
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/participants/" + participantId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,12 +42,12 @@ func GetParticipants(c *ToornamentClient, tournamentId, apiScope string, partici
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", participantRange.drange).
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/"+tournamentId+"/participants")
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/participants")
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	participant := make([]Participant,1)
+	participant := make([]Participant, 1)
 	err = json.Unmarshal(body, &participant)
 	if err != nil {
 		log.Fatalln(err)

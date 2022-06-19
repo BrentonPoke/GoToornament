@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 type Status interface{}
@@ -124,7 +124,7 @@ func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params Match
 	if params.ScheduledAfter != nil {
 		c.client.QueryParam.Set("scheduled_after", params.ScheduledAfter.Format("2006-01-02T15:04:05+07:00"))
 	}
-	if apiScope != MatchScope().VIEWER  {
+	if apiScope != MatchScope().VIEWER {
 		if len(params.CustomUserIdentifiers) > 0 {
 			c.client.QueryParam.Set("custom_user_identifiers", strings.Join(params.CustomUserIdentifiers, ","))
 		}
@@ -216,11 +216,11 @@ func GetDisciplineMatches(c *ToornamentClient, disciplineId string, params Match
 	return matches
 }
 
-func UpdateMatch(c *ToornamentClient,tournamentId, matchId string, params *UpdateMatchParams) Match {
+func UpdateMatch(c *ToornamentClient, tournamentId, matchId string, params *UpdateMatchParams) Match {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
-	c.client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+	c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	resp, err := c.client.R().SetBody(params).Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId)
 	if err != nil {
 		log.Fatal(err)
@@ -241,7 +241,7 @@ func GetMatchGame(c *ToornamentClient, tournamentId, apiScope, matchId string, g
 	if apiScope != MatchScope().VIEWER {
 		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
-	resp, err := c.client.R().Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/" + tournamentId + "/matches/" + matchId +"/games/"+strconv.Itoa(gameNumber))
+	resp, err := c.client.R().Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/matches/" + matchId + "/games/" + strconv.Itoa(gameNumber))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -261,7 +261,7 @@ func GetMatchGames(c *ToornamentClient, tournamentId, apiScope, matchId string, 
 	if apiScope != MatchScope().VIEWER {
 		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
-	resp, err := c.client.R().Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/" + tournamentId + "/matches/" + matchId +"/games")
+	resp, err := c.client.R().Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/matches/" + matchId + "/games")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -274,12 +274,12 @@ func GetMatchGames(c *ToornamentClient, tournamentId, apiScope, matchId string, 
 	return games
 }
 
-func UpdateMatchGame(c *ToornamentClient,tournamentId, matchId string, gameNumber int, params *MatchGame) MatchGame {
+func UpdateMatchGame(c *ToornamentClient, tournamentId, matchId string, gameNumber int, params *MatchGame) MatchGame {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
-	c.client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
-	resp, err := c.client.R().SetBody(params).Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId+"/games/"+strconv.Itoa(gameNumber))
+	c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
+	resp, err := c.client.R().SetBody(params).Patch("https://api.toornament.com/organizer/v2/tournaments/" + tournamentId + "/matches/" + matchId + "/games/" + strconv.Itoa(gameNumber))
 	if err != nil {
 		log.Fatal(err)
 	}

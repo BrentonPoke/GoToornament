@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 type BracketNode struct {
@@ -56,7 +56,7 @@ func GetBracketNodes(c *ToornamentClient, tournamentId string, stageId string, h
 		u.Query().Set("round_ids", strings.Join(params.RoundIDs, ","))
 	}
 
-	if len(params.RoundNumbers) > 0  {
+	if len(params.RoundNumbers) > 0 {
 		u.Query().Set("round_numbers", strings.Join(params.RoundNumbers, ","))
 		sb.WriteString(strings.Join(params.RoundNumbers, ","))
 	}
@@ -73,7 +73,7 @@ func GetBracketNodes(c *ToornamentClient, tournamentId string, stageId string, h
 	resp, err := client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
-		SetHeader("range",value).
+		SetHeader("range", value).
 		Get(u.String())
 	if err != nil {
 		log.Fatal(err)

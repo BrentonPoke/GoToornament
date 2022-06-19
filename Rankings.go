@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-resty/resty"
+	"github.com/go-resty/resty/v2"
 )
 
 func RankingScope() *apiScope {
@@ -22,7 +22,7 @@ func NewRankingRange(begin, end int) *apiRange {
 type RankingParams struct {
 	CustomUserIdentifiers []string `json:"custom_user_identifiers"`
 	GroupIds              []string `json:"group_ids"`
-	GroupNumbers          []int `json:"group_numbers"`
+	GroupNumbers          []int    `json:"group_numbers"`
 	ParticipantIds        []string `json:"participant_ids"`
 }
 
@@ -42,24 +42,24 @@ func GetRankings(c *ToornamentClient, tournamentId, stageId, apiScope string, pa
 	if len(params.GroupIds) > 0 {
 		c.client.QueryParam.Set("group_ids", strings.Join(params.GroupIds, ","))
 	}
-	if apiScope != "viewer"{
-		if len(params.CustomUserIdentifiers) > 0{
-			c.client.QueryParam.Set("custom_user_identifiers",strings.Join(params.CustomUserIdentifiers, ","))
+	if apiScope != "viewer" {
+		if len(params.CustomUserIdentifiers) > 0 {
+			c.client.QueryParam.Set("custom_user_identifiers", strings.Join(params.CustomUserIdentifiers, ","))
 		}
 
 		if len(params.ParticipantIds) > 0 {
 			c.client.QueryParam.Set("participant_ids", strings.Join(params.ParticipantIds, ","))
 		}
-		c.client.Header.Set("Authorization","Bearer "+ c.auth.AccessToken)
+		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 
 	resp, err := c.client.R().
-		Get("https://api.toornament.com/"+apiScope+"/v2/tournaments/"+tournamentId+"/stages/"+stageId+"/ranking-items")
+		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages/" + stageId + "/ranking-items")
 	if err != nil {
 		log.Fatal(err)
 	}
 	body := resp.Body()
-	rankings := make([]Ranking,1,itemRange.end-itemRange.begin+1)
+	rankings := make([]Ranking, 1, itemRange.end-itemRange.begin+1)
 	err = json.Unmarshal(body, &rankings)
 	if err != nil {
 		log.Fatalln(err)
