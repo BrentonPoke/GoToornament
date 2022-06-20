@@ -114,18 +114,18 @@ type Settings struct {
 }
 
 type Stage struct {
-ID       string `json:"id"`
-Number   int    `json:"number"`
-Name     string `json:"name"`
-Type     string `json:"type"`
-Closed   bool   `json:"closed"`
-StageSettings struct {
-Size       int    `json:"size"`
-GrandFinal string `json:"grand_final"`
-Threshold  int    `json:"threshold"`
-SkipRound1 bool   `json:"skip_round1"`
-} `json:"settings"`
-TournamentId string `json:"tournament_id"`
+	ID            string `json:"id"`
+	Number        int    `json:"number"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Closed        bool   `json:"closed"`
+	StageSettings struct {
+		Size       int    `json:"size"`
+		GrandFinal string `json:"grand_final"`
+		Threshold  int    `json:"threshold"`
+		SkipRound1 bool   `json:"skip_round1"`
+	} `json:"settings"`
+	TournamentId string `json:"tournament_id"`
 }
 
 type apiRange struct {
@@ -194,6 +194,28 @@ type MatchGame struct {
 	Status     string          `json:"status"`
 	Opponents  []MatchOpponent `json:"opponents"`
 	Properties Properties      `json:"properties"`
+}
+
+type MatchReport struct {
+	Note                 string `json:"note"`
+	UserId               string `json:"user_id"`
+	CustomUserIdentifier string `json:"custom_user_identifier"`
+	Report               struct {
+		Opponents []struct {
+			Score   int    `json:"score"`
+			Number  int    `json:"number"`
+			Result  string `json:"result"`
+			Forfeit bool   `json:"forfeit"`
+		} `json:"opponents"`
+	} `json:"report"`
+	ParticipantId  string    `json:"participant_id"`
+	Type           string    `json:"type"`
+	Id             string    `json:"id"`
+	Closed         bool      `json:"closed"`
+	ClosedAt       time.Time `json:"closed_at"`
+	ClosedAuthorId string    `json:"closed_author_id"`
+	TournamentId   string    `json:"tournament_id"`
+	MatchId        string    `json:"match_id"`
 }
 
 type Round struct {

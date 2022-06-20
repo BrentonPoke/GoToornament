@@ -77,6 +77,15 @@ type MatchParams struct {
 	Sort                  string     `json:"sort"`
 }
 
+type ReportParams struct {
+	TournamentIds         []string `json:"tournament_ids"`
+	MatchIds              []string `json:"match_ids"`
+	ParticipantIds        []string `json:"participant_ids"`
+	CustomUserIdentifiers []string `json:"custom_user_identifiers"`
+	Types                 []string `json:"types"`
+	IsClosed              *bool    `json:"is_closed"`
+}
+
 func GetMatches(c *ToornamentClient, tournamentId, apiScope string, params MatchParams, matchRange *apiRange) []Match {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
@@ -290,4 +299,52 @@ func UpdateMatchGame(c *ToornamentClient, tournamentId, matchId string, gameNumb
 		log.Fatalln(err)
 	}
 	return *match
+}
+
+func GetMatchReports(c *ToornamentClient, reportsRange *apiRange, params *ReportParams) []MatchReport {
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+	c.client.Header.Set("range", reportsRange.drange)
+	c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
+	resp, err := c.client.R().Get("https://api.toornament.com/organizer/v2/reports")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(params.MatchIds) > 0 {
+		c.client.QueryParam.Set("match_ids", strings.Join(params.MatchIds, ","))
+	}
+
+	if len(params.TournamentIds) > 0 {
+		c.client.QueryParam.Set("tournament_ids", strings.Join(params.TournamentIds, ","))
+	}
+
+	if len(params.Types) > 0 {
+		c.client.QueryParam.Set("types", strings.Join(params.Types, ","))
+	}
+
+	if len(params.ParticipantIds) > 0 {
+		c.client.QueryParam.Set("participant_ids", strings.Join(params.ParticipantIds, ","))
+	}
+
+	if params.IsClosed != nil {
+		input := func(i bool) string {
+			switch {
+			case i:
+				return "1"
+			default:
+				return "0"
+			}
+		}
+		c.client.QueryParam.Set("is_closed", input(*params.IsClosed))
+	}
+	body := resp.Body()
+	reports := make([]MatchReport, 1, reportsRange.end-reportsRange.begin+1)
+	err = json.Unmarshal(body, &reports)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return reports
 }
