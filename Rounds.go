@@ -50,9 +50,10 @@ func GetRounds(c *ToornamentClient, tournamentId, apiScope string, params RoundP
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
-	if apiScope != RoundScope().VIEWER {
+	if apiScope != RoundScope().VIEWER || apiScope != RoundScope().RESULT {
 		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
+
 	if len(params.GroupNumbers) > 0 {
 		sNums := make([]string, len(params.GroupNumbers))
 		for i, x := range params.GroupNumbers {

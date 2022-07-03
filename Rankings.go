@@ -10,7 +10,7 @@ import (
 )
 
 func RankingScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+	return &apiScope{RESULT: "organizer:result"}
 }
 
 func NewRankingRange(begin, end int) *apiRange {
@@ -31,6 +31,10 @@ func GetRankings(c *ToornamentClient, tournamentId, stageId, apiScope string, pa
 	c.client.Header.Set("Accept", "application/json")
 	c.client.Header.Set("X-Api-Key", c.ApiKey)
 	c.client.Header.Set("range", itemRange.drange)
+
+	if apiScope != RoundScope().RESULT {
+		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
+	}
 
 	if len(params.GroupNumbers) > 0 {
 		sNums := make([]string, len(params.GroupNumbers))
@@ -54,7 +58,7 @@ func GetRankings(c *ToornamentClient, tournamentId, stageId, apiScope string, pa
 	}
 
 	resp, err := c.client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages/" + stageId + "/ranking-items")
+		Get("https://api.toornament.com/organizer/v2/ranking-items")
 	if err != nil {
 		log.Fatal(err)
 	}

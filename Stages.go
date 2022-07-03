@@ -10,7 +10,7 @@ import (
 )
 
 func StageScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+	return &apiScope{ADMIN: "organizer:admin", RESULT: "organizer:result"}
 }
 
 func NewStagesRange(begin, end int) *apiRange {
@@ -23,11 +23,11 @@ func GetStages(c *ToornamentClient, tournamentId, apiScope string) []Stage {
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
-	if apiScope != "viewer" {
+	if apiScope != StageScope().RESULT || apiScope != StageScope().ADMIN {
 		client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 	resp, err := client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages")
+		Get("https://api.toornament.com/organizer/v2/stages")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -70,7 +70,7 @@ func GetStage(c *ToornamentClient, tournamentId, id, apiScope string) Stage {
 		client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 	resp, err := client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/stages/" + id)
+		Get("https://api.toornament.com/organizer/v2/stages" + id)
 	if err != nil {
 		log.Printf("Called with scope(s): %v", c.auth.Scope)
 		log.Fatal(err)

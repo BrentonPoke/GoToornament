@@ -9,7 +9,7 @@ import (
 )
 
 func ParticipantScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
+	return &apiScope{PARTICIPANT: "organizer:participant"}
 }
 
 func NewParticipantRange(begin, end int) *apiRange {
@@ -23,7 +23,7 @@ func GetParticipant(c *ToornamentClient, tournamentId, apiScope, participantId s
 	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/participants/" + participantId)
+		Get("https://api.toornament.com/organizer/v2/participants/" + participantId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,7 +42,7 @@ func GetParticipants(c *ToornamentClient, tournamentId, apiScope string, partici
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", participantRange.drange).
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/participants")
+		Get("https://api.toornament.com/organizer/v2/participants")
 	if err != nil {
 		log.Fatal(err)
 	}

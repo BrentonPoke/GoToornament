@@ -10,7 +10,7 @@ import (
 )
 
 func GroupScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+	return &apiScope{ADMIN: "organizer:admin", RESULT: "organizer:result"}
 }
 
 func NewGroupRange(begin, end int) *apiRange {
@@ -56,11 +56,11 @@ func GetGroup(c *ToornamentClient, tournamentId, apiScope, groupId string) Group
 	client := resty.New()
 	client.Header.Set("Accept", "application/json")
 	client.Header.Set("X-Api-Key", c.ApiKey)
-	if apiScope != "viewer" {
+	if apiScope != GroupScope().RESULT || apiScope != GroupScope().ADMIN {
 		client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
 	}
 	resp, err := client.R().
-		Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/groups/" + groupId)
+		Get("https://api.toornament.com/organizer/v2/groups/" + groupId)
 	if err != nil {
 		log.Fatal(err)
 	}

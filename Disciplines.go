@@ -8,23 +8,19 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func DisciplineScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", PARTICIPANT: "participant", ORGANIZER: "organizer"}
-}
-
 func NewDisciplineRange(begin, end int) *apiRange {
 	d := apiRange{begin: begin, end: end}
 	d.drange = "disciplines=" + strconv.Itoa(d.begin) + "-" + strconv.Itoa(d.end)
 	return &d
 }
 
-func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRange) []Discipline {
+func GetDisciplines(c *ToornamentClient, disciplineRange *apiRange) []Discipline {
 	c.client = resty.New()
 	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
 		SetHeader("range", disciplineRange.drange).
-		Get("https://api.toornament.com/" + apiScope + "/v2/disciplines")
+		Get("https://api.toornament.com/organizer/v2/disciplines")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,12 +33,12 @@ func GetDisciplines(c *ToornamentClient, apiScope string, disciplineRange *apiRa
 	return discipline
 }
 
-func GetDiscipline(c *ToornamentClient, disciplineScope, id string) Discipline {
+func GetDiscipline(c *ToornamentClient, id string) Discipline {
 	c.client = resty.New()
 	resp, err := c.client.R().
 		SetHeader("Accept", "application/json").
 		SetHeader("X-Api-Key", c.ApiKey).
-		Get("https://api.toornament.com/" + disciplineScope + "/v2/disciplines/" + id)
+		Get("https://api.toornament.com/organizer/v2/disciplines/" + id)
 	if err != nil {
 		log.Fatal(err)
 	}
