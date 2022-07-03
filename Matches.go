@@ -40,7 +40,7 @@ type UpdateMatchParams struct {
 }
 
 func MatchScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+	return &apiScope{VIEWER: "organizer:viewer", RESULT: "organizer:result"}
 }
 func NewSort() Sort {
 	return Sort{STRUCTURE: "structures", SCHEDULE: "schedule", LATEST_RESULTS: "latest_results"}
