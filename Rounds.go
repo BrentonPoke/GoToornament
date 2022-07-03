@@ -17,13 +17,35 @@ type RoundParams struct {
 }
 
 func RoundScope() *apiScope {
-	return &apiScope{VIEWER: "viewer", ORGANIZER: "organizer"}
+	return &apiScope{VIEWER: "organizer:viewer", RESULT: "organizer:result"}
 }
 func NewRoundRange(begin, end int) *apiRange {
 	d := apiRange{begin: begin, end: end}
 	d.drange = "rounds=" + strconv.Itoa(d.begin) + "-" + strconv.Itoa(d.end)
 	return &d
 }
+
+func GetRound(c *ToornamentClient, apiScope string, roundId string) Round {
+	c.client = resty.New()
+	c.client.Header.Set("Accept", "application/json")
+	c.client.Header.Set("X-Api-Key", c.ApiKey)
+	if apiScope != RoundScope().RESULT {
+		c.client.Header.Set("Authorization", "Bearer "+c.auth.AccessToken)
+	}
+
+	resp, err := c.client.R().Get("https://api.toornament.com/organizer/v2/rounds/" + roundId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body := resp.Body()
+	round := new(Round)
+	err = json.Unmarshal(body, round)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return *round
+}
+
 func GetRounds(c *ToornamentClient, tournamentId, apiScope string, params RoundParams, roundRange *apiRange) []Round {
 	c.client = resty.New()
 	c.client.Header.Set("Accept", "application/json")
@@ -51,7 +73,7 @@ func GetRounds(c *ToornamentClient, tournamentId, apiScope string, params RoundP
 	if len(params.StageIds) > 0 {
 		c.client.QueryParam.Set("stage_ids", strings.Join(params.StageIds, ","))
 	}
-	resp, err := c.client.R().Get("https://api.toornament.com/" + apiScope + "/v2/tournaments/" + tournamentId + "/rounds")
+	resp, err := c.client.R().Get("https://api.toornament.com/organizer/v2/rounds")
 
 	if err != nil {
 		log.Fatal(err)

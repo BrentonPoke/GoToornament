@@ -134,9 +134,13 @@ type apiRange struct {
 }
 
 type apiScope struct {
-	VIEWER      string
-	PARTICIPANT string
-	ORGANIZER   string
+	VIEWER       string
+	PARTICIPANT  string
+	RESULT       string
+	REGISTRATION string
+	PERMISSION   string
+	DELETE       string
+	ADMIN        string
 }
 
 type Ranking struct {
