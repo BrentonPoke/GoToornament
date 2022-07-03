@@ -54,6 +54,7 @@ func GetStagesForTournaments(c *ToornamentClient, tournamentIds []string, apiSco
 		log.Fatal(err)
 	}
 	body := resp.Body()
+
 	stages := make([]Stage, 1, stageRange.end+stageRange.begin+1)
 	err = json.Unmarshal(body, &stages)
 	if err != nil {

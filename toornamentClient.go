@@ -32,7 +32,7 @@ func GetClient(c *ToornamentClient, clientID, clientSecret, grantType string, sc
 			"client_id":     clientID,
 			"scope":         strings.Join(scope, " "),
 		}).
-		Post("https://api.toornament.com/oauth/v2/token")
+		Get("https://api.toornament.com/oauth/v2/token")
 
 	body := resp.Body()
 	if err != nil {
